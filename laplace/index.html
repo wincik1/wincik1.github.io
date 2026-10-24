@@ -115,16 +115,30 @@ button:active{background:#243048;transform:scale(.96)}
   button{padding:0 11px;font-size:15px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* изображения */
+.figure{margin:0 0 14px;background:#0e121b;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.figure img{display:block;width:100%;height:auto;max-height:44svh;max-height:44dvh;object-fit:contain;object-position:center;background:#0b0e15}
+.figure figcaption{padding:9px 13px;font-size:12px;line-height:1.4;color:#9aa4b8}
+.figure .credit{color:#69738a;font-size:10.5px}
+.title-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.title-wrap h1{text-align:center}
+.title-wrap .figure{max-width:340px;width:100%}
+@media(min-width:640px){
+  .figure img{max-height:38dvh}
+  .title-wrap .figure{max-width:300px}
+}
+
 </style>
 </head>
 <body>
 <div class="progress"><i id="prog"></i></div>
 <div class="deck" id="deck">
-<section class="slide on"><h1>Пьер-Симон<br>Лаплас</h1>
+<section class="slide on"><div class="title-wrap"><h1>Пьер-Симон<br>Лаплас</h1><figure class="figure"><img src="img/portrait_heinsius.jpg" alt="Пьер-Симон Лаплас. Гравюра Иоганна Эрнста Гейнзиуса, 1775" loading="lazy" decoding="async"><figcaption>Пьер-Симон Лаплас. Гравюра Иоганна Эрнста Гейнзиуса, 1775<br><span class="credit">Johann Ernst Heinsius — Wikimedia Commons · Public domain</span></figcaption></figure></div>
 <p class="lead">1749–1827 · Аналитическая вероятность, небесная механика, преобразование Лапласа</p>
 <p class="src">Презентация · 12 слайдов · клавиши ← → для навигации</p>
 <div class="tags"><span class="tag">Франция</span><span class="tag">Политехническая школа</span><span class="tag">Кабинет естественных наук</span><span class="tag">Екатерин II</span></div></section>
-<section class="slide on"><h2><span class="kicker">Кто это</span>Мальчик из деревни, ставший первым секретарём академии</h2>
+<section class="slide on"><h2><span class="kicker">Кто это</span>Мальчик из деревни, ставший первым секретарём академии</h2><figure class="figure"><img src="img/portrait_guerin.jpg" alt="Пьер-Симон Лаплас. Портрет П.-Ж. Гюэна (1783)" loading="lazy" decoding="async"><figcaption>Пьер-Симон Лаплас. Портрет П.-Ж. Гюэна (1783)<br><span class="credit">Paulin Jean-Baptiste Guérin (1783 - 1855) — Wikimedia Commons · Public domain</span></figcaption></figure>
 <div class="grid">
 <div class="card"><div class="t">Происхождение</div><div class="v"><b>1749</b>Амьен, Нормандия. Сын крестьянина-сапожника, 11 братьев и сестёр</div></div>
 <div class="card"><div class="t">Детство</div><div class="v"><b>Школа в Амьене</b>Впечатлён скрипкой швейного мастера — решил изучить математику</div></div>
@@ -157,7 +171,7 @@ button:active{background:#243048;transform:scale(.96)}
 <div class="card"><div class="t">Оценка</div><div class="v"><b>Сила метода</b>Работает для простых задач. С ростом числа исходов нужна уже комбинаторика</div></div>
 </div>
 <p style="margin-top:18px">Главная заслуга Лапласа в том, что он показал: этот простой принцип <b>достаточен</b> для решения задач, которые до него считались недоступными, — и что из него вырастает вся современная теория вероятностей.</p></section>
-<section class="slide on"><h2><span class="kicker">Теорема Лапласа</span>Предельный переход к нормальному распределению</h2>
+<section class="slide on"><h2><span class="kicker">Теорема Лапласа</span>Предельный переход к нормальному распределению</h2><figure class="figure"><img src="img/gauss.jpg" alt="Нормальное распределение — предел, к которому стремится биномиальное распределение" loading="lazy" decoding="async"><figcaption>Нормальное распределение — предел, к которому стремится биномиальное распределение<br><span class="credit">Liukairen — Wikimedia Commons · CC BY-SA 4.0</span></figcaption></figure>
 <p>Задача: бросить монету <b>n</b> раз. Какова вероятность, что орлов выпадет не менее <b>m</b>? Лаплас показал, что при больших <b>n</b> ответ сходится к гауссовой (нормальной) кривой.</p>
 <div class="formula">P(m ≤ k ≤ n) ≈ ∫  [1 / (√(2π) · √(npq))] · e^(−(k−np)² / 2npq) dx</div>
 <p>Что здесь важно: <b>теорема Лапласа</b> — это первая в истории предельная теорема, и она стала фундаментом <b>теоремы Лапласа — Ляпунова</b> (1900-е), обобщавшей её на независимые, но не одинаково распределённые величины.</p>
@@ -188,14 +202,14 @@ f(t) = (1/2πi) ∫_(c−i∞)^(c+i∞) e^(pt) · F(p) dp</div>
 <div class="card"><div class="t">Математика</div><div class="v"><b>Интегральные уравнения</b>Операционное исчисление, обобщённые функции, теория потенциала</div></div>
 </div>
 <p style="margin-top:18px">Отдельная ирония: <b>«теорема Лапласа» о преобразовании координат</b> (теорема о дифференцировании по параметру) и преобразование Лапласа — разные вещи, хотя обе названы в его честь.</p></section>
-<section class="slide on"><h2><span class="kicker">Небесная механика</span>«Мне следует изучить человека, если я хочу знать Небо»</h2>
+<section class="slide on"><h2><span class="kicker">Небесная механика</span>«Мне следует изучить человека, если я хочу знать Небо»</h2><figure class="figure"><img src="img/observatoire.jpg" alt="Парижская обсерватория, где Лаплас работал с 1774 года" loading="lazy" decoding="async"><figcaption>Парижская обсерватория, где Лаплас работал с 1774 года<br><span class="credit">Remi Mathis — Wikimedia Commons · CC BY-SA 4.0</span></figcaption></figure>
 <p>Лаплас считал <b>«Мекюрeninскую»</b> задачу: из ньютоновской механики вывести всё движение небесных тел, доведя её до предельной точности. Итог — пятитомный <b>«Трактат о небесной механике»</b> (1824–1826).</p>
 <div class="grid">
 <div class="card"><div class="t">Главный результат</div><div class="v"><b>Доказательство устойчивости Солнечной системы</b>Планеты не разлетятся в бесконечность — орбиты устойчивы</div></div>
 <div class="card"><div class="t">Инструменты</div><div class="v"><b>Метод вариации постоянных, теория возмущений</b>Базовый язык для небесной механики XX века</div></div>
 </div>
 <p style="margin-top:20px">Отдельная линия — <b>демография и «политическая арифметика»</b>: Лаплас первым применил теорию вероятностей к анализу населения, а в <i>«Опыте о теории вероятностей»</i> (1813) выдвинул идею <b>«теории демографии»</b> — то, что позже назовут статистикой. Именно он первым заявил, что по переписке можно <b>оценивать численность народа</b> и предсказывать её рост.</p></section>
-<section class="slide on"><h2><span class="kicker">Характер</span>Инженер, а не мистик</h2>
+<section class="slide on"><h2><span class="kicker">Характер</span>Инженер, а не мистик</h2><figure class="figure"><img src="img/napoleon.jpg" alt="Наполеон в кабинете Тюильери. Ж.-Л. Давид, 1812 — Лаплас был министром при Наполеоне" loading="lazy" decoding="async"><figcaption>Наполеон в кабинете Тюильери. Ж.-Л. Давид, 1812 — Лаплас был министром при Наполеоне<br><span class="credit">Jacques-Louis David — Wikimedia Commons · Public domain</span></figcaption></figure>
 <ul>
 <li><b>Практик</b>— 13 лет работал в Электрической комиссии, занимаясь метрологией и единицами измерения; сам паспорт системы СИ включает <code>lab_m</code> — константу Лапласа</li>
 <li><b>Политик</b>— министр внутренних дел при Наполеоне, затем голосовал за его отречение, затем тихо ушёл в науку</li>
@@ -204,7 +218,7 @@ f(t) = (1/2πi) ∫_(c−i∞)^(c+i∞) e^(pt) · F(p) dp</div>
 </ul>
 <div class="quote">«Я пишу так, чтобы не оскорблять чувства слабых умов».
 <span class="src">Лаплас о выборе обозначений в «Изложении системы мира»</span></div></section>
-<section class="slide on"><h2><span class="kicker">Итог</span>Что осталось в наследии</h2>
+<section class="slide on"><h2><span class="kicker">Итог</span>Что осталось в наследии</h2><figure class="figure"><img src="img/portrait_classic.jpg" alt="Пьер-Симон Лаплас. Литография с медалью" loading="lazy" decoding="async"><figcaption>Пьер-Симон Лаплас. Литография с медалью<br><span class="credit">Laplace, Pierre-Simon Marquis de — Wikimedia Commons · Public domain</span></figcaption></figure>
 <div class="grid">
 <div class="card"><div class="t">Математика</div><div class="v"><b>Аналитическая вероятность</b>Превращение вероятностей из развлечения в метод науки</div></div>
 <div class="card"><div class="t">Теория</div><div class="v"><b>Предельные теоремы</b>Нормальное распределение и закон больших чисел</div></div>
