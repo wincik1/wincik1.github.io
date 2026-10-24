@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Просмотры — Минута в минуту</title>
+<meta name="description" content="Счётчик просмотров и прирост за час, 6 и 24 часа.">
+<style>
+:root{--bg:#08090d;--card:#111319;--txt:#eceff4;--mut:#7d8595;--acc:#e5484d;--line:#1d222b;--ok:#3ecf8e}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(1200px 600px at 50% -10%,#151922 0%,var(--bg) 60%);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:28px 16px}
+.card{width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:30px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--mut)}
+.num{font-size:clamp(42px,13vw,74px);font-weight:800;line-height:1;margin:14px 0 8px;letter-spacing:-2px;background:linear-gradient(180deg,#fff,#9aa3b2);-webkit-background-clip:text;background-clip:text;color:transparent}
+.label{color:var(--mut);font-size:16px;margin-bottom:22px}
+.bar{height:6px;background:#1b2029;border-radius:99px;overflow:hidden;margin:0 auto 10px;max-width:340px}
+.bar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--acc),#ff8a3d);border-radius:99px;transition:width .6s ease}
+.stat{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-around;font-size:13px;color:var(--mut)}
+.stat b{display:block;color:var(--txt);font-size:16px;margin-bottom:2px}
+.growth{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.g{background:#0d1016;border:1px solid var(--line);border-radius:14px;padding:14px 8px}
+.g .t{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.6px}
+.g .v{font-size:19px;font-weight:700;margin-top:7px;color:var(--ok);letter-spacing:-.4px}
+.g .s{font-size:11px;color:var(--mut);margin-top:4px}
+.title{margin-top:20px;font-size:14px;color:#b9c0cd;line-height:1.55}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:middle}
+.dot.off{background:var(--acc)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">Просмотры видео</div>
+    <div class="num" id="views">276 068</div>
+    <div class="label" id="label">просмотров</div>
+
+    <div class="bar"><i id="bar" style="width:0%"></i></div>
+
+    <div class="stat">
+      <div><b id="likes">8 454</b><span id="likesWord">лайков</span></div>
+      <div><b>1 ч 57 мин</b>длительность</div>
+      <div><b>23 окт.</b>2026</div>
+    </div>
+
+    <div class="growth">
+      <div class="g"><div class="t">за 1 час</div><div class="v" id="g1">+12 220</div><div class="s" id="g1s">просмотров</div></div>
+      <div class="g"><div class="t">за 6 часов</div><div class="v" id="g6">+73 321</div><div class="s" id="g6s">просмотров</div></div>
+      <div class="g"><div class="t">за 24 часа</div><div class="v" id="g24">+276 068</div><div class="s" id="g24s">просмотров</div></div>
+    </div>
+
+    <div class="title"><span class="dot off" id="dot"></span><span id="status">подключение…</span><br>
+      «Кто поджег Майдан? Имена, прослушки, камеры наблюдения» — канал «Минута в минуту»</div>
+  </div>
+
+<script>
+var VID = "jacyUY968Ts";
+var FALLBACK_VIEWS = 276068;
+var FALLBACK_LIKES = 8454;
+var UPLOAD = new Date("2026-10-23T15:07:02Z").getTime();
+
+/* якоря истории просмотров (часы назад, просмотры) — восстановлены из архива */
+var ANCHORS = [[21.09,0],[18.62,7424],[17.35,31819],[16.73,50590],[15.12,91300]];
+
+var SOURCES = [
+  "https://returnyoutubedislikeapi.com/votes?videoId=" + VID,
+  "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://www.youtube.com/watch?v=" + VID),
+  "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent("https://www.youtube.com/watch?v=" + VID)
+];
+
+function $(id){ return document.getElementById(id); }
+function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00A0"); }
+function plural(n, forms){
+  n = Math.abs(Math.round(n)) % 100; var n1 = n % 10;
+  if (n > 10 && n < 20) return forms[2];
+  if (n1 > 1 && n1 < 5) return forms[1];
+  if (n1 === 1) return forms[0];
+  return forms[2];
+}
+function vw(n){ return plural(n, ["просмотр","просмотра","просмотров"]); }
+function lw(n){ return plural(n, ["лайк","лайка","лайков"]); }
+function hw(n){ return plural(n, ["час","часа","часов"]); }
+
+function viewsAt(anchors, cur, hoursAgo){
+  var A = anchors.slice().sort(function(x,y){ return y[0]-x[0]; });
+  A.push([0, cur]);
+  if (hoursAgo >= A[0][0]) return 0;
+  for (var i=0;i<A.length-1;i++){
+    var t1=A[i][0], v1=A[i][1], t2=A[i+1][0], v2=A[i+1][1];
+    if (t2<=hoursAgo && hoursAgo<=t1){
+      if (t1===t2) return v1;
+      return v1 + (v2-v1)*(t1-hoursAgo)/(t1-t2);
+    }
+  }
+  return cur;
+}
+var prev = null;
+
+function render(d, live){
+  var v = (typeof d.viewCount === "number") ? d.viewCount : FALLBACK_VIEWS;
+  var l = (typeof d.likes === "number") ? d.likes : FALLBACK_LIKES;
+  $("views").textContent = fmt(v);
+  $("label").textContent = vw(v);
+  $("likes").textContent = fmt(l);
+  $("likesWord").textContent = lw(l);
+  $("bar").style.width = Math.max(4, Math.min(100, v/300000*100)) + "%";
+  if (live){ $("dot").className = "dot"; }
+  prev = v;
+
+  var sinceUpload = (Date.now() - UPLOAD)/3600000;
+  var anchors = ANCHORS.slice();
+  anchors[0] = [sinceUpload, 0];
+  [1,6,24].forEach(function(w){
+    var vw2 = viewsAt(anchors, v, w);
+    var delta = Math.max(0, Math.round(v - vw2));
+    $("g"+w).textContent = "+" + fmt(delta);
+    $("g"+w+"s").textContent = vw(delta);
+  });
+}
+
+function extract(txt){
+  var m = txt.match(/"viewCount"\s*:\s*"?(\d+)/);
+  if (!m) return null;
+  var out = {viewCount: parseInt(m[1],10)};
+  var l = txt.match(/"likes"\s*:\s*(\d+)/);
+  if (l) out.likes = parseInt(l[1],10);
+  return out;
+}
+
+function trySource(i){
+  if (i >= SOURCES.length){
+    $("dot").className = "dot off";
+    $("status").textContent = "источник недоступен — показаны последние известные данные";
+    return;
+  }
+  fetch(SOURCES[i], {cache:"no-store", mode:"cors"})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function(t){ var d = extract(t); if(!d) throw new Error("no data"); render(d, true); })
+    .catch(function(){ trySource(i+1); });
+}
+function tick(){ trySource(0); }
+
+render({viewCount: FALLBACK_VIEWS, likes: FALLBACK_LIKES}, false);
+tick();
+setInterval(tick, 15000);
+</script>
+</body>
+</html>
